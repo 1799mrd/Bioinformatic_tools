@@ -163,10 +163,9 @@ from all_functions.dna_rna_tools import run_dna_rna_tools
 from all_functions.fastq_filtration_tools import filter_fastq_sequences
 ```
 ## Учебный-результат
-> * В данном проекте я научилась пользоваться pyCharm в котором довольно удобно писать Readme file.
+> * В данном проекте я научилась пользоваться pyCharm в котором довольно удобно писать Readme file. А также работу с модулями
 > * К сожалению, я не успела получить комментарии к 4 дз и не смогла исправить код к данному проекту, но перечитать все написанное мной пришлось.
-
-
+> * Вспомнила fastq
 
 ## Contacts  
 - [Mukhametshina Regina] 1709mrd@gmail.com

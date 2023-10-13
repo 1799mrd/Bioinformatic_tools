@@ -37,27 +37,3 @@ def complement(seq):
 
 def reverse_complement(seq):
     return complement(reverse(seq))
-
-def run_dna_rna_tools(*args):
-    sequences = args[:-1]
-    procedure = args[-1]
-
-    results = []
-    for seq in sequences:
-        if procedure == 'transcribe':
-            result = transcribe(seq)
-        elif procedure == 'reverse':
-            result = reverse(seq)
-        elif procedure == 'complement':
-            result = complement(seq)
-        elif procedure == 'reverse_complement':
-            result = reverse_complement(seq)
-        else:
-            result = "Unknown procedure"
-
-        results.append(result)
-
-    if len(results) == 1:
-        return results[0]
-    else:
-        return results

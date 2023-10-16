@@ -1,17 +1,41 @@
-EXAMPLE_FASTQ = {
-    '@SRX079804:1:SRR292678:1:1101:21885:21885': ('ACAGCAACATAAACATGATGGGATGGCGTAAGCCCCCGAGATATCAGTTTACCCAGGATAAGAGATTAAATTATGAGCAACATTATTAA', 'FGGGFGGGFGGGFGDFGCEBB@CCDFDDFFFFBFFGFGEFDFFFF;D@DD>C@DDGGGDFGDGG?GFGFEGFGGEF@FDGGGFGFBGGD'),
-    '@SRX079804:1:SRR292678:1:1101:24563:24563': ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG', 'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D'),
-    '@SRX079804:1:SRR292678:1:1101:30161:30161': ('GAACGACAGCAGCTCCTGCATAACCGCGTCCTTCTTCTTTAGCGTTGTGCAAAGCATGTTTTGTATTACGGGCATCTCGAGCGAATC', 'DFFFEGDGGGGFGGEDCCDCEFFFFCCCCCB>CEBFGFBGGG?DE=:6@=>A<A>D?D8DCEE:>EEABE5D@5:DDCA;EEE-DCD'),
-    '@SRX079804:1:SRR292678:1:1101:47176:47176': ('TGAAGCGTCGATAGAAGTTAGCAAACCCGCGGAACTTCCGTACATCAGACACATTCCGGGGGGTGGGCCAATCCATGATGCCTTTG', 'FF@FFBEEEEFFEFFD@EDEFFB=DFEEFFFE8FFE8EEDBFDFEEBE+E<C<C@FFFFF;;338<??D:@=DD:8DDDD@EE?EB'),
-    '@SRX079804:1:SRR292678:1:1101:149302:149302': ('TAGGGTTGTATTTGCAGATCCATGGCATGCCAAAAAGAACATCGTCCCGTCCAATATCTGCAACATACCAGTTGGTTGGTA', '@;CBA=:@;@DBDCDEEE/EEEEEEF@>FBEEB=EFA>EEBD=DAEEEEB9)99>B99BC)@,@<9CDD=C,5;B::?@;A'),
-    '@SRX079804:1:SRR292678:1:1101:170868:170868': ('CTGCCGAGACTGTTCTCAGACATGGAAAGCTCGATTCGCATACACTCGCTGAGTAAGAGAGTCACACCAAATCACAGATT', 'E;FFFEGFGIGGFBG;C6D<@C7CDGFEFGFHDFEHHHBBHHFDFEFBAEEEEDE@A2=DA:??C3<BCA7@DCDEG*EB'),
-    '@SRX079804:1:SRR292678:1:1101:171075:171075': ('CATTATAGTAATACGGAAGATGACTTGCTGTTATCATTACAGCTCCATCGCATGAATAATTCTCTAATATAGTTGTCAT', 'HGHHHHGFHHHHFHHEHHHHFGEHFGFGGGHHEEGHHEEHBHHFGDDECEGGGEFGF<FGGIIGEBGDFFFGFFGGFGF'),
-    '@SRX079804:1:SRR292678:1:1101:175500:175500': ('GACGCCGTGGCTGCACTATTTGAGGCACCTGTCCTCGAAGGGAAGTTCATCTCGACGCGTGTCACTATGACATGAATG', 'GGGGGFFCFEEEFFDGFBGGGA5DG@5DDCBDDE=GFADDFF5BE49<<<BDD?CE<A<8:59;@C.C9CECBAC=DE'),
-    '@SRX079804:1:SRR292678:1:1101:190136:190136': ('GAACCTTCTTTAATTTATCTAGAGCCCAAATTTTAGTCAATCTATCAACTAAAATACCTACTGCTACTACAAGTATT', 'DACD@BEECEDE.BEDDDDD,>:@>EEBEEHEFEHHFFHH?FGBGFBBD77B;;C?FFFFGGFED.BBABBG@DBBE'),
-    '@SRX079804:1:SRR292678:1:1101:190845:190845': ('CCTCAGCGTGGATTGCCGCTCATGCAGGAGCAGATAATCCCTTCGCCATCCCATTAAGCGCCGTTGTCGGTATTCC', 'FF@FFCFEECEBEC@@BBBBDFBBFFDFFEFFEB8FFFFFFFFEFCEB/>BBA@AFFFEEEEECE;ACD@DBBEEE'),
-    '@SRX079804:1:SRR292678:1:1101:198993:198993': ('AGTTATTTATGCATCATTCTCATGTATGAGCCAACAAGATAGTACAAGTTTTATTGCTATGAGTTCAGTACAACA', '<<<=;@B??@<>@><48876EADEG6B<A@*;398@.=BB<7:>.BB@.?+98204<:<>@?A=@EFEFFFEEFB'),
-    '@SRX079804:1:SRR292678:1:1101:204480:204480': ('AGTGAGACACCCCTGAACATTCCTAGTAAGACATCTTTGAATATTACTAGTTAGCCACACTTTAAAATGACCCG', '<98;<@@@:@CD@BCCDD=DBBCEBBAAA@9???@BCDBCGF=GEGDFGDBEEEEEFFFF=EDEE=DCD@@BBC')
-    }
+import os
+
+def main(input_path, gc_bounds=(0, 100), length_bounds=(0, 2**32), quality_threshold=0):
+    seqs = read_fastq_file(input_path)
+    filtered_seqs = filter_fastq_sequences(seqs, gc_bounds, length_bounds, quality_threshold)
+    output_filename = get_output_filename(input_path)
+    write_filtered_fastq(filtered_seqs, output_filename)
+
+def read_fastq_file(input_path):
+    seqsdi = {}
+    tuple_seqs = []
+    id_seq = []
+    with open('myfile.txt', 'r') as file:
+        seq_id = ''
+        seq = ''
+        qual = ''
+        for line in file:
+            line = line.strip()
+            if line.startswith('@'):
+                seq_id = line
+                id_seq.append(seq_id)
+            elif line.startswith('+'):
+                pass
+            else:
+                if seq_id not in seqsdi:
+                    seqsdi[seq_id] =  {'seq': '', 'qual': ''}
+                if seq == '':
+                    seq = line
+                else:
+                    qual = line
+                    seqsdi[seq_id]['seq'] = seq
+                    seqsdi[seq_id]['qual'] = qual
+                    tuple_seqs.append((seq, qual))
+                    seq_id = ''
+                    seq = ''
+                    qual = ''
+        seqs = dict(zip(id_seq, tuple_seqs))
+    return seqs
 
 def filter_fastq_sequences(seqs, gc_bounds=(0, 100), length_bounds=(0, 2**32), quality_threshold=0):
     filtered_seqs = {}
@@ -23,19 +47,18 @@ def filter_fastq_sequences(seqs, gc_bounds=(0, 100), length_bounds=(0, 2**32), q
         
         if is_within_bounds(gc_content, gc_bounds) and is_within_bounds(seq_length, length_bounds) and avg_quality >= quality_threshold:
             filtered_seqs[name] = (sequence, quality)
-    
     return filtered_seqs
 
 def calculate_gc_content(sequence):
     gc_count = sequence.count('G') + sequence.count('C')
     total_count = len(sequence)
-    
+
     return (gc_count / total_count) * 100
 
 def calculate_avg_quality(quality):
     total_quality = sum(ord(q)-33 for q in quality)
     seq_length = len(quality)
-    
+
     return total_quality / seq_length
 
 def is_within_bounds(value, bounds):
@@ -44,3 +67,18 @@ def is_within_bounds(value, bounds):
     else:
         lower_bound, upper_bound = bounds
         return lower_bound <= value <= upper_bound
+
+def get_output_filename(input_path):
+    output_dir = 'fastq_filtrator_results'
+    os.makedirs(output_dir, exist_ok=True)
+    filename = os.path.basename(input_path)
+    output_filename = os.path.splitext(filename)[0]
+    return os.path.join(output_dir, output_filename)
+
+def write_filtered_fastq(filtered_seqs, output_filename):
+    with open(f'{output_filename}.fastq', 'w') as file:
+        for seq_id, seq_data in filtered_seqs.items():
+            file.write(f'{seq_id}\n')
+            file.write(f'{seq_data[0]}\n')
+            file.write('+\n')
+            file.write(f'{seq_data[1]}\n')
